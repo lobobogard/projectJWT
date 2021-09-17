@@ -1,8 +1,8 @@
 <template>
-  <q-page class="flex-center">
+  <q-page class="">
     <!-- <q-form action="https://some-url.com" method="post"> -->
        <div class="row q-mt-md justify-center" style="height: 0px">
-         <div class="col-3">
+         <div class="col-8 col-sm-3">
           <div class="row shadow-2 redondo bg-pink-10">
             <div class="col">
                <div class="row text-center">
@@ -97,17 +97,17 @@
 
 <script lang="">
 import { api } from 'boot/axios'
-import { defineComponent, ref, computed } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Notificacion } from '../javascript/notification.js'
 import { SessionStorage, useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import logoutApi from '../javascript/logoutApi'
 
 export default defineComponent({
   setup () {
     const router = useRouter()
     const $q = useQuasar()
-    const $store = useStore()
+    const { sessionToken } = logoutApi()
     const opcion = ref(false)
     const data = ref(null)
     const nombre = ref('')
@@ -140,12 +140,12 @@ export default defineComponent({
     }
 
     /* generar cuenta */
-    const sessionToken = computed({
-      get: () => $store.state.jwt.sessionToken,
-      set: val => {
-        $store.commit('jwt/sessionJwt', val)
-      }
-    })
+    // const sessionToken = computed({
+    //   get: () => $store.state.jwt.sessionToken,
+    //   set: val => {
+    //     $store.commit('jwt/sessionJwt', val)
+    //   }
+    // })
 
     const crearCuenta = () => {
       if (validarRegistroCuenta()) {
@@ -272,34 +272,6 @@ export default defineComponent({
       return validacion
     }
 
-    // const validateTokenJWT = () => {
-    //   let token = SessionStorage.getItem('token')
-    //   if (token === null) {
-    //     Notificacion('You arent logged', 'red-10')
-    //   }
-    //   token = parseJwt(token)
-    //   console.log(token)
-    //   return jwtExpire(token)
-    // }
-
-    // const jwtExpire = (token) => {
-    //   if (Date.now() >= token.exp * 1000) {
-    //     return false
-    //   } else {
-    //     return true
-    //   }
-    // }
-
-    const parseJwt = (token) => {
-      const base64Url = token.split('.')[1]
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-      }).join(''))
-
-      return JSON.parse(jsonPayload)
-    }
-
     const visibilidadPassword = () => {
       visibilidad.value = 'text'
       setTimeout(() => { visibilidad.value = 'password' }, 2000)
@@ -347,7 +319,6 @@ export default defineComponent({
       visibilidadPassword,
       visibilidadConfirmPassword,
       notificacion,
-      parseJwt,
       flagRegister,
       flagLogin,
       opcion,

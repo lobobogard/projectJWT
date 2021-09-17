@@ -2,17 +2,23 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated class="bg-black">
       <q-toolbar>
-        <q-btn v-if="jwt" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"/>
+        <q-btn v-if="sessionToken" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"/>
 
-        <q-toolbar-title v-if="jwt">
-          Menu
+        <q-toolbar-title v-if="sessionToken">
+          Menu {{sessionToken}}
         </q-toolbar-title>
 
-        <div v-if="jwt"> <q-icon name="logout" class="text-red pointer" style="font-size: 32px;" @click="logout"/></div>
+        <div v-if="sessionToken">
+          <q-icon name="logout" class="text-red pointer" style="font-size: 32px;" @click="logout()">
+            <q-tooltip>
+              Exit System
+            </q-tooltip>
+          </q-icon>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawer" bordered class="bg-dark text-white">
+    <q-drawer v-model="drawer" bordered class="bg-dark text-white" v-if="sessionToken">
       <q-list>
         <q-item-label header>
           Essential Links
@@ -33,52 +39,57 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
+    title: 'Perfil',
+    caption: 'Info Company',
     icon: 'school',
-    link: 'https://quasar.dev'
+    link: 'perfil'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Company',
+    caption: 'Info Company',
+    icon: 'school',
+    link: 'company'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    title: 'Token',
+    caption: 'Options token',
+    icon: 'token',
+    link: 'token'
   }
+  // {
+  //   title: 'Discord Chat Channel',
+  //   caption: 'chat.quasar.dev',
+  //   icon: 'chat',
+  //   link: 'https://chat.quasar.dev'
+  // },
+  // {
+  //   title: 'Forum',
+  //   caption: 'forum.quasar.dev',
+  //   icon: 'record_voice_over',
+  //   link: 'https://forum.quasar.dev'
+  // },
+  // {
+  //   title: 'Twitter',
+  //   caption: '@quasarframework',
+  //   icon: 'rss_feed',
+  //   link: 'https://twitter.quasar.dev'
+  // },
+  // {
+  //   title: 'Facebook',
+  //   caption: '@QuasarFramework',
+  //   icon: 'public',
+  //   link: 'https://facebook.quasar.dev'
+  // },
+  // {
+  //   title: 'Quasar Awesome',
+  //   caption: 'Community Quasar projects',
+  //   icon: 'favorite',
+  //   link: 'https://awesome.quasar.dev'
+  // }
 ]
 
-import { useRouter } from 'vue-router'
 import { defineComponent, computed } from 'vue'
-import { SessionStorage } from 'quasar'
+import logoutApi from '../javascript/logoutApi'
 import { useStore } from 'vuex'
 
 export default defineComponent({
@@ -89,23 +100,8 @@ export default defineComponent({
   },
 
   setup () {
-    const router = useRouter()
+    const { logout, sessionToken } = logoutApi()
     const $store = useStore()
-
-    const logout = () => {
-      SessionStorage.set('token', '')
-      jwt.value = ''
-      router.push({ name: 'index' })
-    }
-
-    const jwt = computed({
-      get: () => {
-        return $store.state.jwt.sessionToken
-      },
-      set: val => {
-        $store.commit('jwt/sessionJwt', val)
-      }
-    })
 
     const drawer = computed({
       get: () => {
@@ -121,7 +117,7 @@ export default defineComponent({
     }
 
     return {
-      jwt,
+      sessionToken,
       essentialLinks: linksList,
       toggleLeftDrawer,
       logout,
