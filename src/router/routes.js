@@ -4,15 +4,15 @@ import { SessionStorage } from 'quasar'
 import { Notificacion } from '../javascript/notification.js'
 
 const guard = (to, from, next) => {
-  console.log(SessionStorage.getItem('token'))
   const token = SessionStorage.getItem('token')
   if (!token || token === null) {
-    // next({ name: 'index' })
-    Notificacion('You havent token please logout and login again', 'red-10')
+    Notificacion('unauthorized access', 'red-10')
+    next({ name: 'index' })
   } else {
     next()
   }
 }
+
 const routes = [
   {
     path: '/',
@@ -21,7 +21,8 @@ const routes = [
       { path: '', name: 'index', component: () => import('pages/Index.vue') },
       { path: 'company', name: 'company', component: () => import('src/pages/company.vue'), beforeEnter: multiguard([guard]) },
       { path: 'perfil', name: 'perfil', component: () => import('src/pages/perfil.vue'), beforeEnter: multiguard([guard]) },
-      { path: 'token', name: 'token', component: () => import('src/pages/token.vue'), beforeEnter: multiguard([guard]) }
+      { path: 'token', name: 'token', component: () => import('src/pages/token.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'validation', name: 'validation', component: () => import('src/pages/validation.vue'), beforeEnter: multiguard([guard]) }
     ]
   },
 

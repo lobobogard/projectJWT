@@ -5,7 +5,7 @@
         <q-btn v-if="sessionToken" flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer"/>
 
         <q-toolbar-title v-if="sessionToken">
-          Menu {{sessionToken}}
+          Menu
         </q-toolbar-title>
 
         <div v-if="sessionToken">
@@ -55,6 +55,12 @@ const linksList = [
     caption: 'Options token',
     icon: 'token',
     link: 'token'
+  },
+  {
+    title: 'Validation',
+    caption: 'Options validation',
+    icon: 'build',
+    link: 'validation'
   }
   // {
   //   title: 'Discord Chat Channel',

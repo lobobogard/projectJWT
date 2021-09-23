@@ -22,8 +22,6 @@ export default function () {
     }
     api.post('logout', data, { withCredentials: true }).then((response) => {
       SessionStorage.set('token', '')
-      // console.log(response.data)
-      Notificacion('Logout success', 'cyan-10')
     }).catch(() => {
       Notificacion('Server error communicating with support', 'red-10')
     })

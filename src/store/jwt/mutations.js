@@ -11,3 +11,11 @@ export function sessionJwt (state, sessionJwt) {
 export function toggleLogin (state, value) {
   state.toggleDrawer = value
 }
+
+export function showNotification (state, value) {
+  state.showNotification = value
+}
+
+export function setJavascriptValidation (state, value) {
+  state.javascriptValidation = value
+}

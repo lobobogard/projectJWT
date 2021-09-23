@@ -1,4 +1,4 @@
-<template lang="">
+<template lang="html">
 <q-page class="bg-grey-2">
   <div>
     <div class="row justify-center">
@@ -23,7 +23,8 @@
         </q-input>
       </div>
       <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-          <q-select v-model="data.country" :options="options" label="Country" />
+          <q-select v-model="data.country" :options="catalogueCountry" emit-value map-options option-value="ID" option-label="country" label="Country"/>
+          <div class="text-red-10" style="font-size:90%;" v-if="refCountry"><label>Field is required</label></div>
       </div>
     </div>
     <div class="row q-ml-md q-mt-md">
@@ -60,26 +61,35 @@
         </q-btn>
       </div>
       <div class="col-4 col-sm-2 text-center">
-        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" />
+        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px"/>
       </div>
     </div>
+    <br>
   </div>
 </q-page>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { apiToken } from 'boot/axiosToken'
+// import { Notificacion } from '../javascript/notification.js'
 import token from '../javascript/token'
+import catchs from '../javascript/catch'
+import { useStore } from 'vuex'
 
 export default {
   setup () {
+    const { catchError } = catchs()
     const { validateToken } = token()
+    const $store = useStore()
     const loading = ref(false)
     const refCompany = ref(null)
     const refContact = ref(null)
+    const refCountry = ref(false)
     const refMail = ref(null)
     const refCellPhone = ref(null)
     const refPhone = ref(null)
+    const catalogueCountry = ref(null)
     const data = ref({
       company: '',
       contact: '',
@@ -90,21 +100,40 @@ export default {
     })
 
     const send = () => {
-      validateToken()
-      reset()
-      // if (validation()) {
-      //   reset()
-      // } else {
-      //   alert('error')
-      // }
+      if (validation()) {
+        validateToken()
+        const postData = {
+          // userId: 1,
+          ContactName: data.value.contact,
+          CompanyName: data.value.company,
+          Country: data.value.country.toString(),
+          Email: data.value.mail,
+          CellPhone: data.value.cellPhone.toString(),
+          Phone: data.value.phone.toString()
+        }
+        apiToken.post('company', postData).then((response) => {
+          console.log(response.data)
+          catalogueCountry.value = response.data
+          reset()
+        }).catch((err) => {
+          catchError(err)
+        })
+      }
     }
 
     const validation = () => {
-      refCompany.value.validate()
-      refContact.value.validate()
-      refMail.value.validate()
-      refCellPhone.value.validate()
-      refPhone.value.validate()
+      if (javascriptValidation.value) {
+        refCompany.value.validate()
+        refContact.value.validate()
+        refMail.value.validate()
+        refCellPhone.value.validate()
+        refPhone.value.validate()
+        data.value.country === '' || data.value.country === null ? refCountry.value = true : refCountry.value = false
+      }
+
+      if (!javascriptValidation.value) {
+        return true
+      }
 
       if (refCompany.value.hasError || refContact.value.hasError || refMail.value.hasError || refCellPhone.value.hasError || refPhone.value.hasError || data.value.country === '') {
         return false
@@ -134,17 +163,33 @@ export default {
       return emailPattern.test(val) || 'Invalid email'
     }
 
+    const javascriptValidation = computed({
+      get: () => {
+        return $store.state.jwt.javascriptValidation
+      }
+    })
+
+    const mounted = () => {
+      validateToken()
+      apiToken.get('cataloguePerfil').then((response) => {
+        console.log(response.data)
+        catalogueCountry.value = response.data
+      }).catch((err) => {
+        catchError(err)
+      })
+    }
+    onMounted(mounted)
+
     return {
       data,
       refCompany,
       refContact,
+      refCountry,
       refMail,
       refCellPhone,
       refPhone,
       loading,
-      options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ],
+      catalogueCountry,
       simulateProgress,
       validation,
       isValidEmail,
@@ -153,7 +198,8 @@ export default {
   }
 }
 </script>
-<style>
+
+<style lang="css" scoped>
 .label {
   font-size: 17px;
 }

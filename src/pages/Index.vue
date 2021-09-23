@@ -97,7 +97,7 @@
 
 <script lang="">
 import { api } from 'boot/axios'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import { Notificacion } from '../javascript/notification.js'
 import { SessionStorage, useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
@@ -107,7 +107,7 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const $q = useQuasar()
-    const { sessionToken } = logoutApi()
+    const { sessionToken, logout } = logoutApi()
     const opcion = ref(false)
     const data = ref(null)
     const nombre = ref('')
@@ -286,6 +286,8 @@ export default defineComponent({
     //   SessionStorage.set("token", token)
     //   SessionStorage.set("tokenRefresh", tokenRefresh)
     // }
+
+    onMounted(logout)
 
     const saveTokens = (token) => {
       SessionStorage.set('token', token)

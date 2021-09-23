@@ -2,10 +2,12 @@
 import { SessionStorage } from 'quasar'
 import logoutApi from '../javascript/logoutApi'
 import { Notificacion } from '../javascript/notification.js'
+import computedNotification from '../javascript/computedNotification'
 import { api } from 'boot/axios'
 
 export default function () {
   const { logout } = logoutApi()
+  const { notifiactionRefreshTokenShow } = computedNotification()
 
   const validateToken = () => {
     let token = SessionStorage.getItem('token')
@@ -42,7 +44,7 @@ export default function () {
     const data = { token: SessionStorage.getItem('token') }
     api.post('tokenRefresh', data, { withCredentials: true }).then((response) => {
       saveTokens(response.data.token)
-      Notificacion('Successfully token regenerate', 'cyan-10')
+      notifiactionRefreshTokenShow()
     }).catch(error => {
       console.log(error.response)
       if (error.response.status === 401) {
