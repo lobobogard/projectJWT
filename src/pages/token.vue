@@ -5,9 +5,10 @@
     <div class="row q-mt-md justify-center text-white">
       <div class="col-9 bg-teal-10 shadow-3 q-pl-md q-pr-sm q-pt-sm q-pb-sm">
         JWT (JSON Web Token) is a standard that is within the RFC 7519 document.<br>
-        A) The options buttons are generated for testing purposes.<br>
-        B) The <b>"token refresh"</b> is generated in a cookie handling an expiration time of <b>10 minutes</b> for the purpose of separate tests. It handles other extra safeguards such as Httponly and SameSmite of strict type.<br>
-        C) The <b>"token"</b> is stored in the session storage has <b>5 minutes</b> of expiration after expire will be renove the token and cookie and not logout for that.
+        A) Click on the top token icon to test the token on its official page.<br>
+        B) The options buttons are generated for testing purposes.<br>
+        C) The <b>"token refresh"</b> is generated in a cookie handling an expiration time of <b>10 minutes</b> for the purpose of separate tests. It handles other extra safeguards such as Httponly and SameSmite of strict type.<br>
+        D) The <b>"token"</b> is stored in the session storage has <b>5 minutes</b> of expiration after expire will be renove the token and cookie and not logout for that.
       </div>
     </div>
     <div class="row q-mt-md justify-center text-white">
@@ -17,12 +18,12 @@
     </div>
     <div class="row q-mt-md justify-center text-white">
       <div class="col-9 bg-pink-10 shadow-3 q-pl-md q-pr-sm q-pt-sm q-pb-sm">
-       When eliminating the session storage token, if we try to select a route, they will notify us that we must log out and log in again to obtain a new token.
+       When eliminating the session storage token, if we try to select an option in the menu, it will instantly logout us from the system.
       </div>
     </div>
     <div class="row q-mt-md justify-center text-white">
       <div class="col-9 bg-purple-10 shadow-3 q-pl-md q-pr-sm q-pt-sm q-pb-sm">
-        <p>In this option you can be notified every time the token is refreshed, checking that it is not logout by refresh the token.</p>
+        <p>In this option you can be notified every time the <b>"token regenerate"</b> when is expire and refresh the token, checking that it is not logout by refresh the token.</p>
       </div>
     </div>
     <div class="row q-pt-xl">

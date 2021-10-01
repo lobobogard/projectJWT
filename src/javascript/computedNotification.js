@@ -16,7 +16,7 @@ export default function () {
 
   const notifiactionRefreshTokenShow = () => {
     if (showNotification.value) {
-      Notificacion('Successfully token regenerate', 'cyan-10')
+      Notificacion('token regenerate', 'purple-10')
     }
   }
 

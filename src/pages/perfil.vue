@@ -3,50 +3,36 @@
   <div>
     <div class="row justify-center">
       <div class="q-mt-xl col-3 text-white bg-red-10 text-center rcorners">
-          <label class="label">COMPANY</label>
-      </div>
-    </div>
-
-    <div class="row q-ml-md q-mt-md">
-      <div class="col-11 col-sm q-mt-md">
-          <q-input v-model="data.company" color="dark" label="Company name" ref="refCompany" :rules="[val => !!val || 'Field is required']">
-          <template v-slot:prepend>
-            <q-icon name="location_city" color="red-10" />
-          </template>
-        </q-input>
-      </div>
-      <div class="col-11 col-sm q-mt-md marginLeft">
-          <q-input v-model="data.contact" color="dark" label="Contact Name" ref="refContact" :rules="[val => !!val || 'Field is required']">
-          <template v-slot:prepend>
-            <q-icon name="person" color="red-10" />
-          </template>
-        </q-input>
-      </div>
-      <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-          <q-select v-model="data.country" :options="options" label="Country" />
+          <label class="label">PERFIL</label>
       </div>
     </div>
     <div class="row q-ml-md q-mt-md">
-      <div class="col-11 col-sm q-mt-md">
-          <q-input v-model="data.mail" color="dark" label="Email" ref="refMail" :rules="[val => !!val || 'Field is required', isValidEmail]">
-          <template v-slot:prepend>
-            <q-icon name="mail" color="red-10" />
-          </template>
-        </q-input>
+      <div class="col-11 col-sm q-mt-md q-mr-md">
+        <selectCompany :propCompany="optionCompany" @callCompany="callCompany"/>
+        <!-- <q-select dense filled v-model="company" :options="optionCompany" emit-value map-options option-value="ID" option-label="companyName" label="Company" color="red-10" bg-color="blue-grey-5" label-color="pink-10"/> -->
+        <!-- <div class="text-red-10" style="font-size:90%;" v-if="refCompany"><label>Field is required</label></div> -->
       </div>
       <div class="col-11 col-sm q-mt-md marginLeft">
-          <q-input v-model.number="data.cellPhone" type="number" color="dark" label="Cell Phone" ref="refCellPhone" :rules="[val => !!val || 'Field is required']">
-          <template v-slot:prepend>
-            <q-icon name="stay_current_portrait" color="red-10" />
-          </template>
-        </q-input>
+         <selectSOperative :propSystemOperative="optionSystemOperative" @callSystemOperative="callSystemOperative" />
       </div>
       <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-          <q-input v-model.number="data.phone" type="number" color="dark" label="Phone" ref="refPhone" :rules="[val => !!val || 'Field is required']">
-          <template v-slot:prepend>
-            <q-icon name="call" color="red-10" />
-          </template>
-        </q-input>
+        <selectServer :propServers="optionServers" @callServer="callServer" />
+      </div>
+    </div>
+    <div class="row q-ml-md q-mt-md">
+      <div class="col-11 col-sm q-mt-md text-left shadow-3 bg-blue-grey-9 text-white">
+      <q-checkbox v-model="mySql" label="MySql" color="teal" />
+      <q-checkbox v-model="mariaDB" label="MariaDB" color="pink" />
+      <q-checkbox v-model="postgresSql" label="PostgresSql" color="orange" />
+      <q-checkbox v-model="mongoDB" label="MongoDB" color="red" />
+      <q-checkbox v-model="redis" label="Redis" color="cyan" />
+      <q-checkbox v-model="sqlite" label="SQLite" color="green" />
+      </div>
+      <div class="col-11 col-sm q-mt-md marginLeft">
+        <selectBackEnd :propBackEnd="optionsBackEnd" @callBackEnd="callBackEnd"/>
+      </div>
+      <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
+        <selectFrontEnd :propFrontEnd="optionsFrontEnd" @callFrontEnd="callFrontEnd"/>
       </div>
     </div>
     <div class="row justify-center q-mt-xl">
@@ -68,57 +54,126 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import token from '../javascript/token'
+import { api } from 'boot/axios'
+import catchs from '../javascript/catch'
+import selectCompany from 'components/selectCompany'
+import selectServer from 'components/selectServer'
+import selectBackEnd from 'components/selectBackEnd'
+import selectFrontEnd from 'components/selectFrontEnd'
+import selectSOperative from 'components/selectSOperative'
+// import { Notificacion } from '../javascript/notification.js'
 
 export default {
+  name: 'perfil',
+  components: { selectCompany, selectBackEnd, selectFrontEnd, selectSOperative, selectServer },
   setup () {
+    const { catchError } = catchs()
     const { validateToken } = token()
+    // models
+    const company = ref(null)
+    const server = ref(null)
+    const sysOperative = ref(null)
+    const backEnd = ref([])
+    const frontEnd = ref([])
+    const mySql = ref(true)
+    const mariaDB = ref(false)
+    const postgresSql = ref(false)
+    const mongoDB = ref(true)
+    const redis = ref(true)
+    const sqlite = ref(true)
+    // catalag
+    const optionSystemOperative = ref()
+    const optionServers = ref([])
+    const optionsBackEnd = ref([])
+    const optionsFrontEnd = ref([])
+    const optionCompany = ref([])
+    // comperative
+    const compareSystemOperative = ref([])
+    const compareServer = ref([])
+    // data
     const loading = ref(false)
-    const refCompany = ref(null)
-    const refContact = ref(null)
-    const refMail = ref(null)
-    const refCellPhone = ref(null)
-    const refPhone = ref(null)
-    const data = ref({
-      company: '',
-      contact: '',
-      country: '',
-      mail: '',
-      cellPhone: '',
-      phone: ''
-    })
+
+    // methods
+    function callCompany (value) {
+      company.value = value.newVal
+    }
+
+    function callSystemOperative (value) {
+      sysOperative.value = value.newVal
+    }
+
+    function callServer (value) {
+      server.value = value.newVal
+    }
+
+    function callBackEnd (value) {
+      backEnd.value = value.newVal
+    }
+
+    function callFrontEnd (value) {
+      frontEnd.value = value.newVal
+    }
 
     const send = () => {
-      validateToken()
-      reset()
-      // if (validation()) {
-      //   reset()
-      // } else {
-      //   alert('error')
-      // }
+      validateToken().then(token => {
+        const postData = {
+          companyID: company.value,
+          systemOperativeID: getSysOperativeID(),
+          server: getServerID(),
+          mysql: mySql.value,
+          mariadb: mariaDB.value,
+          postgresql: postgresSql.value,
+          mongodb: mongoDB.value,
+          redis: redis.value,
+          sqlite: sqlite.value
+        }
+        console.log(postData)
+        api.post('perfil', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          console.log(response.data)
+          // reset()
+          // Notificacion(response.data, 'teal-10')
+        }).catch((err) => {
+          // catchError(err)
+          console.log(err)
+        })
+      })
+    }
+
+    const getSysOperativeID = () => {
+      let sysOperativeID = null
+      compareSystemOperative.value.forEach((obj) => {
+        if (obj.systemOperative === sysOperative.value) {
+          sysOperativeID = obj.ID
+        }
+      })
+
+      return sysOperativeID
+    }
+
+    const getServerID = () => {
+      const value = []
+      server.value.forEach((server, index) => {
+        value[index] = compareServerName(server)
+      })
+      return value
+    }
+
+    const compareServerName = (server) => {
+      let serverID = null
+      compareServer.value.forEach((obj) => {
+        console.log(server)
+        if (obj.server === server) {
+          serverID = obj.ID
+        }
+      })
+
+      return serverID
     }
 
     const validation = () => {
-      refCompany.value.validate()
-      refContact.value.validate()
-      refMail.value.validate()
-      refCellPhone.value.validate()
-      refPhone.value.validate()
 
-      if (refCompany.value.hasError || refContact.value.hasError || refMail.value.hasError || refCellPhone.value.hasError || refPhone.value.hasError || data.value.country === '') {
-        return false
-      } else {
-        return true
-      }
-    }
-
-    const reset = () => {
-      refCompany.value.resetValidation()
-      refContact.value.resetValidation()
-      refMail.value.resetValidation()
-      refCellPhone.value.resetValidation()
-      refPhone.value.resetValidation()
     }
 
     function simulateProgress () {
@@ -129,25 +184,58 @@ export default {
       }, 3000)
     }
 
-    const isValidEmail = (val) => {
-      const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/
-      return emailPattern.test(val) || 'Invalid email'
+    const mounted = () => {
+      validateToken().then((token) => {
+        api.get('catalogueCompany', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          optionCompany.value = response.data.Company
+          optionSystemOperative.value = response.data.CatSystemOperative.map((obj, i) => { return obj.systemOperative })
+          compareSystemOperative.value = response.data.CatSystemOperative
+          optionServers.value = response.data.CatServer.map((obj, i) => { return obj.server })
+          compareServer.value = response.data.CatServer
+          optionsBackEnd.value = response.data.BackEnd
+          optionsFrontEnd.value = response.data.FrontEnd
+          console.log(response.data)
+        }).catch((err) => {
+          catchError(err)
+          console.log(err)
+        })
+      })
     }
 
+    onMounted(mounted)
+
     return {
-      data,
-      refCompany,
-      refContact,
-      refMail,
-      refCellPhone,
-      refPhone,
+      // emmit value
+      callCompany,
+      callServer,
+      callBackEnd,
+      callFrontEnd,
+      callSystemOperative,
+      // catalag
+      optionCompany,
+      optionServers,
+      optionsBackEnd,
+      optionsFrontEnd,
+      optionSystemOperative,
+      // compare
+      compareSystemOperative,
+      compareServer,
+      // models
+      company,
+      sysOperative,
+      server,
+      backEnd,
+      frontEnd,
+      mySql,
+      mariaDB,
+      postgresSql,
+      mongoDB,
+      redis,
+      sqlite,
+      // data
       loading,
-      options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ],
       simulateProgress,
       validation,
-      isValidEmail,
       send
     }
   }

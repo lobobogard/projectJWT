@@ -3,6 +3,7 @@ export default function () {
     sessionToken: false,
     toggleDrawer: false,
     showNotification: false,
-    javascriptValidation: true
+    javascriptValidation: true,
+    opcionLoginRegister: true
   }
 }

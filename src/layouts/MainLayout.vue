@@ -39,16 +39,16 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Perfil',
-    caption: 'Info Company',
-    icon: 'school',
-    link: 'perfil'
+    title: 'Company',
+    caption: 'Capture Company',
+    icon: 'location_city',
+    link: 'company'
   },
   {
-    title: 'Company',
-    caption: 'Info Company',
+    title: 'Perfil',
+    caption: 'Capture Perfil',
     icon: 'school',
-    link: 'company'
+    link: 'perfil'
   },
   {
     title: 'Token',

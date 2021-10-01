@@ -71,11 +71,12 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue'
-import { apiToken } from 'boot/axiosToken'
-// import { Notificacion } from '../javascript/notification.js'
+import { api } from 'boot/axios'
+import { Notificacion } from '../javascript/notification.js'
 import token from '../javascript/token'
 import catchs from '../javascript/catch'
 import { useStore } from 'vuex'
+// import { SessionStorage } from 'quasar'
 
 export default {
   setup () {
@@ -101,24 +102,44 @@ export default {
 
     const send = () => {
       if (validation()) {
-        validateToken()
-        const postData = {
+        loading.value = true
+        validateToken().then(token => {
+          const postData = {
           // userId: 1,
-          ContactName: data.value.contact,
-          CompanyName: data.value.company,
-          Country: data.value.country.toString(),
-          Email: data.value.mail,
-          CellPhone: data.value.cellPhone.toString(),
-          Phone: data.value.phone.toString()
-        }
-        apiToken.post('company', postData).then((response) => {
-          console.log(response.data)
-          catalogueCountry.value = response.data
-          reset()
-        }).catch((err) => {
-          catchError(err)
+            ContactName: data.value.contact,
+            CompanyName: data.value.company,
+            Country: data.value.country.toString(),
+            Email: data.value.mail,
+            CellPhone: data.value.cellPhone.toString(),
+            Phone: data.value.phone.toString()
+          }
+          api.post('company', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+            Notificacion(response.data, 'teal-10')
+            clean().then(() => reset())
+          }).catch((err) => {
+            loading.value = false
+            catchError(err)
+          })
         })
       }
+    }
+
+    const clean = async () => {
+      data.value.contact = ''
+      data.value.company = ''
+      data.value.country = ''
+      data.value.mail = ''
+      data.value.cellPhone = ''
+      data.value.phone = ''
+      loading.value = false
+    }
+
+    const reset = () => {
+      refCompany.value.resetValidation()
+      refContact.value.resetValidation()
+      refMail.value.resetValidation()
+      refCellPhone.value.resetValidation()
+      refPhone.value.resetValidation()
     }
 
     const validation = () => {
@@ -142,14 +163,6 @@ export default {
       }
     }
 
-    const reset = () => {
-      refCompany.value.resetValidation()
-      refContact.value.resetValidation()
-      refMail.value.resetValidation()
-      refCellPhone.value.resetValidation()
-      refPhone.value.resetValidation()
-    }
-
     function simulateProgress () {
       loading.value = true
 
@@ -170,8 +183,11 @@ export default {
     })
 
     const mounted = () => {
-      validateToken()
-      apiToken.get('cataloguePerfil').then((response) => {
+      validateToken().then(token => { catalguePerfil(token) })
+    }
+
+    const catalguePerfil = (token) => {
+      api.get('cataloguePerfil', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
         console.log(response.data)
         catalogueCountry.value = response.data
       }).catch((err) => {
@@ -193,7 +209,8 @@ export default {
       simulateProgress,
       validation,
       isValidEmail,
-      send
+      send,
+      reset
     }
   }
 }

@@ -2,7 +2,7 @@ import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 import { SessionStorage } from 'quasar'
 
-const token = SessionStorage.getItem('token') // nesesita ser state vuex
+const token = SessionStorage.getItem('token')
 
 const apiToken = axios.create({
   baseURL: 'http://localhost:3000/',

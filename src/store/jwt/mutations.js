@@ -19,3 +19,7 @@ export function showNotification (state, value) {
 export function setJavascriptValidation (state, value) {
   state.javascriptValidation = value
 }
+
+export function setOpcionLoginRegister (state, value) {
+  state.opcionLoginRegister = value
+}

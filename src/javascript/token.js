@@ -9,14 +9,16 @@ export default function () {
   const { logout } = logoutApi()
   const { notifiactionRefreshTokenShow } = computedNotification()
 
-  const validateToken = () => {
+  const validateToken = async () => {
     let token = SessionStorage.getItem('token')
     if (token === null) {
-      refreshApiToken()
+      return await refreshApiToken()
     } else {
       token = parseJwt(token)
       if (jwtExpire(token)) {
-        refreshApiToken()
+        return await refreshApiToken()
+      } else {
+        return await SessionStorage.getItem('token')
       }
     }
   }
@@ -42,13 +44,13 @@ export default function () {
 
   const refreshApiToken = () => {
     const data = { token: SessionStorage.getItem('token') }
-    api.post('tokenRefresh', data, { withCredentials: true }).then((response) => {
+    const token = api.post('tokenRefresh', data, { withCredentials: true }).then((response) => {
       saveTokens(response.data.token)
       notifiactionRefreshTokenShow()
+      return SessionStorage.getItem('token')
     }).catch(error => {
       console.log(error.response)
       if (error.response.status === 401) {
-        console.log(error.response.data)
         Notificacion(error.response.data, 'red-10')
         logout()
       } else {
@@ -56,6 +58,7 @@ export default function () {
         logout()
       }
     })
+    return token
   }
 
   const saveTokens = (token) => {
