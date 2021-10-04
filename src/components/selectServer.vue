@@ -5,22 +5,12 @@
 </template>
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { inject } from 'vue'
 
 export default {
-  props: {
-    propServers: Array
-  },
-  setup (props, context) {
-    const server = ref(null)
-
-    watch(server, (newVal) => {
-      context.emit('callServer', { newVal })
-    })
-
-    const optionServers = computed(() => {
-      return props.propServers
-    })
+  setup () {
+    const server = inject('server')
+    const optionServers = inject('optionServers')
 
     return {
       server,

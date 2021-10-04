@@ -2,6 +2,7 @@ import { Notificacion } from './notification.js'
 
 export default function () {
   const catchError = (err) => {
+    console.log(err.response.data)
     if (err.response.status === 400) {
       Notificacion(err.response.data.error, 'red-10')
     }

@@ -11,22 +11,12 @@
 </template>
 <script>
 
-import { ref, computed, watch } from 'vue'
+import { inject } from 'vue'
 
 export default {
-  props: {
-    propBackEnd: Array
-  },
-  setup (props, context) {
-    const backEnd = ref([])
-
-    watch(backEnd, (newVal) => {
-      context.emit('callBackEnd', { newVal })
-    })
-
-    const optionsBackEnd = computed(() => {
-      return props.propBackEnd
-    })
+  setup () {
+    const backEnd = inject('backEnd')
+    const optionsBackEnd = inject('optionsBackEnd')
 
     return {
       backEnd,

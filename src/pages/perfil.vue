@@ -8,31 +8,39 @@
     </div>
     <div class="row q-ml-md q-mt-md">
       <div class="col-11 col-sm q-mt-md q-mr-md">
-        <selectCompany :propCompany="optionCompany" @callCompany="callCompany"/>
-        <!-- <q-select dense filled v-model="company" :options="optionCompany" emit-value map-options option-value="ID" option-label="companyName" label="Company" color="red-10" bg-color="blue-grey-5" label-color="pink-10"/> -->
-        <!-- <div class="text-red-10" style="font-size:90%;" v-if="refCompany"><label>Field is required</label></div> -->
+        <selectCompany />
+         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refCompany"><label>Field is required</label></div></q-slide-transition>
       </div>
       <div class="col-11 col-sm q-mt-md marginLeft">
-         <selectSOperative :propSystemOperative="optionSystemOperative" @callSystemOperative="callSystemOperative" />
+         <selectSOperative />
+          <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refSOperative"><label>Field is required</label></div></q-slide-transition>
       </div>
       <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-        <selectServer :propServers="optionServers" @callServer="callServer" />
+        <selectServer />
+         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refServer"><label>Field is required</label></div></q-slide-transition>
       </div>
     </div>
     <div class="row q-ml-md q-mt-md">
-      <div class="col-11 col-sm q-mt-md text-left shadow-3 bg-blue-grey-9 text-white">
-      <q-checkbox v-model="mySql" label="MySql" color="teal" />
-      <q-checkbox v-model="mariaDB" label="MariaDB" color="pink" />
-      <q-checkbox v-model="postgresSql" label="PostgresSql" color="orange" />
-      <q-checkbox v-model="mongoDB" label="MongoDB" color="red" />
-      <q-checkbox v-model="redis" label="Redis" color="cyan" />
-      <q-checkbox v-model="sqlite" label="SQLite" color="green" />
+      <div class="col-11 col-sm q-mt-md text-left">
+      <div class="shadow-3 bg-blue-grey-9 text-white">
+        <q-checkbox v-model="mySql" label="MySql" color="teal" />
+        <q-checkbox v-model="mariaDB" label="MariaDB" color="pink" />
+        <q-checkbox v-model="postgresSql" label="PostgresSql" color="orange" />
+        <q-checkbox v-model="mongoDB" label="MongoDB" color="red" />
+        <q-checkbox v-model="redis" label="Redis" color="cyan" />
+        <q-checkbox v-model="sqlite" label="SQLite" color="green" />
+      </div>
+      <div>
+         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refDataBase"><label>Field is required</label></div></q-slide-transition>
+      </div>
       </div>
       <div class="col-11 col-sm q-mt-md marginLeft">
-        <selectBackEnd :propBackEnd="optionsBackEnd" @callBackEnd="callBackEnd"/>
+        <selectBackEnd />
+         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refBackEnd"><label>Field is required</label></div></q-slide-transition>
       </div>
       <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-        <selectFrontEnd :propFrontEnd="optionsFrontEnd" @callFrontEnd="callFrontEnd"/>
+        <selectFrontEnd />
+         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refFrontEnd"><label>Field is required</label></div></q-slide-transition>
       </div>
     </div>
     <div class="row justify-center q-mt-xl">
@@ -46,7 +54,7 @@
         </q-btn>
       </div>
       <div class="col-4 col-sm-2 text-center">
-        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" />
+        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="compania++"/>
       </div>
     </div>
   </div>
@@ -54,7 +62,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
 import token from '../javascript/token'
 import { api } from 'boot/axios'
 import catchs from '../javascript/catch'
@@ -63,7 +71,8 @@ import selectServer from 'components/selectServer'
 import selectBackEnd from 'components/selectBackEnd'
 import selectFrontEnd from 'components/selectFrontEnd'
 import selectSOperative from 'components/selectSOperative'
-// import { Notificacion } from '../javascript/notification.js'
+import { Notificacion } from '../javascript/notification.js'
+import { useStore } from 'vuex'
 
 export default {
   name: 'perfil',
@@ -71,18 +80,19 @@ export default {
   setup () {
     const { catchError } = catchs()
     const { validateToken } = token()
+    const $store = useStore()
     // models
     const company = ref(null)
-    const server = ref(null)
     const sysOperative = ref(null)
+    const server = ref([])
     const backEnd = ref([])
     const frontEnd = ref([])
-    const mySql = ref(true)
+    const mySql = ref(false)
     const mariaDB = ref(false)
     const postgresSql = ref(false)
-    const mongoDB = ref(true)
-    const redis = ref(true)
-    const sqlite = ref(true)
+    const mongoDB = ref(false)
+    const redis = ref(false)
+    const sqlite = ref(false)
     // catalag
     const optionSystemOperative = ref()
     const optionServers = ref([])
@@ -92,36 +102,50 @@ export default {
     // comperative
     const compareSystemOperative = ref([])
     const compareServer = ref([])
+    // validate
+    const refCompany = ref(false)
+    const refSOperative = ref(false)
+    const refServer = ref(false)
+    const refDataBase = ref(false)
+    const refBackEnd = ref(false)
+    const refFrontEnd = ref(false)
     // data
     const loading = ref(false)
+    // provider model
+    provide('sysOperative', sysOperative)
+    provide('company', company)
+    provide('server', server)
+    provide('backEnd', backEnd)
+    provide('frontEnd', frontEnd)
 
-    // methods
-    function callCompany (value) {
-      company.value = value.newVal
-    }
+    // provider catalag
+    provide('optionCompany', optionCompany)
+    provide('optionSystemOperative', optionSystemOperative)
+    provide('optionServers', optionServers)
+    provide('optionsBackEnd', optionsBackEnd)
+    provide('optionsFrontEnd', optionsFrontEnd)
 
-    function callSystemOperative (value) {
-      sysOperative.value = value.newVal
-    }
-
-    function callServer (value) {
-      server.value = value.newVal
-    }
-
-    function callBackEnd (value) {
-      backEnd.value = value.newVal
-    }
-
-    function callFrontEnd (value) {
-      frontEnd.value = value.newVal
-    }
+    // config validation
+    const javascriptValidation = computed({
+      get: () => {
+        return $store.state.jwt.javascriptValidation
+      }
+    })
 
     const send = () => {
+      if (validation()) {
+        createPerfil()
+      }
+    }
+
+    const createPerfil = () => {
       validateToken().then(token => {
         const postData = {
           companyID: company.value,
           systemOperativeID: getSysOperativeID(),
           server: getServerID(),
+          backEnd: getComapareID(backEnd.value, optionsBackEnd.value),
+          frontEnd: getComapareID(frontEnd.value, optionsFrontEnd.value),
           mysql: mySql.value,
           mariadb: mariaDB.value,
           postgresql: postgresSql.value,
@@ -129,59 +153,104 @@ export default {
           redis: redis.value,
           sqlite: sqlite.value
         }
-        console.log(postData)
         api.post('perfil', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
-          console.log(response.data)
-          // reset()
-          // Notificacion(response.data, 'teal-10')
+          clean()
+          Notificacion(response.data, 'teal-10')
         }).catch((err) => {
-          // catchError(err)
+          catchError(err)
           console.log(err)
         })
       })
     }
 
+    const clean = () => {
+      company.value = null
+      server.value = []
+      sysOperative.value = null
+      backEnd.value = []
+      frontEnd.value = []
+      mySql.value = false
+      mariaDB.value = false
+      postgresSql.value = false
+      mongoDB.value = false
+      redis.value = false
+      sqlite.value = false
+    }
+
+    const validation = () => {
+      let result = true
+      refCompany.value = false
+      refSOperative.value = false
+      refServer.value = false
+      refDataBase.value = false
+      refBackEnd.value = false
+      refFrontEnd.value = false
+
+      if (!javascriptValidation.value) {
+        return result
+      }
+
+      if (!company.value) {
+        refCompany.value = true
+        result = false
+      }
+
+      if (!sysOperative.value) {
+        refSOperative.value = true
+        result = false
+      }
+
+      if (server.value.length === 0) {
+        refServer.value = true
+        result = false
+      }
+
+      if (backEnd.value.length === 0) {
+        refBackEnd.value = true
+        result = false
+      }
+
+      if (frontEnd.value.length === 0) {
+        refFrontEnd.value = true
+        result = false
+      }
+
+      if (!mySql.value && !mariaDB.value && !postgresSql.value && !mongoDB.value && !redis.value && !sqlite.value) {
+        refDataBase.value = true
+        result = false
+      }
+
+      return result
+    }
+
+    const getComapareID = (items, object) => {
+      const value = []
+      items.forEach((item, index) => { value[index] = compareObjects(item.ID, object) })
+      return value
+    }
+
+    const compareObjects = (item, object) => {
+      let result = null
+      object.forEach((obj) => { if (obj.ID === item) { result = obj.ID } })
+      return result
+    }
+
     const getSysOperativeID = () => {
       let sysOperativeID = null
-      compareSystemOperative.value.forEach((obj) => {
-        if (obj.systemOperative === sysOperative.value) {
-          sysOperativeID = obj.ID
-        }
-      })
-
+      compareSystemOperative.value.forEach((obj) => { if (obj.systemOperative === sysOperative.value) { sysOperativeID = obj.ID } })
       return sysOperativeID
     }
 
     const getServerID = () => {
       const value = []
-      server.value.forEach((server, index) => {
-        value[index] = compareServerName(server)
-      })
+      server.value.forEach((server, index) => { value[index] = compareServerName(server) })
       return value
     }
 
     const compareServerName = (server) => {
       let serverID = null
-      compareServer.value.forEach((obj) => {
-        console.log(server)
-        if (obj.server === server) {
-          serverID = obj.ID
-        }
-      })
-
+      compareServer.value.forEach((obj) => { if (obj.server === server) { serverID = obj.ID } })
       return serverID
-    }
-
-    const validation = () => {
-
-    }
-
-    function simulateProgress () {
-      loading.value = true
-
-      setTimeout(() => {
-        loading.value = false
-      }, 3000)
     }
 
     const mounted = () => {
@@ -205,12 +274,6 @@ export default {
     onMounted(mounted)
 
     return {
-      // emmit value
-      callCompany,
-      callServer,
-      callBackEnd,
-      callFrontEnd,
-      callSystemOperative,
       // catalag
       optionCompany,
       optionServers,
@@ -232,10 +295,15 @@ export default {
       mongoDB,
       redis,
       sqlite,
+      // validate
+      refCompany,
+      refSOperative,
+      refServer,
+      refDataBase,
+      refBackEnd,
+      refFrontEnd,
       // data
       loading,
-      simulateProgress,
-      validation,
       send
     }
   }

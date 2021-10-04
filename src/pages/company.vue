@@ -24,7 +24,7 @@
       </div>
       <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
           <q-select v-model="data.country" :options="catalogueCountry" emit-value map-options option-value="ID" option-label="country" label="Country"/>
-          <div class="text-red-10" style="font-size:90%;" v-if="refCountry"><label>Field is required</label></div>
+           <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refCountry"><label>Field is required</label></div></q-slide-transition>
       </div>
     </div>
     <div class="row q-ml-md q-mt-md">
@@ -163,14 +163,6 @@ export default {
       }
     }
 
-    function simulateProgress () {
-      loading.value = true
-
-      setTimeout(() => {
-        loading.value = false
-      }, 3000)
-    }
-
     const isValidEmail = (val) => {
       const emailPattern = /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/
       return emailPattern.test(val) || 'Invalid email'
@@ -206,7 +198,6 @@ export default {
       refPhone,
       loading,
       catalogueCountry,
-      simulateProgress,
       validation,
       isValidEmail,
       send,
