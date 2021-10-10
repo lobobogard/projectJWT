@@ -20,7 +20,11 @@ const routes = [
     children: [
       { path: '', name: 'index', component: () => import('pages/Index.vue') },
       { path: 'company', name: 'company', component: () => import('src/pages/company.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'companyCreate', name: 'companyCreate', component: () => import('src/pages/companyCreate.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'companyUpdate', name: 'companyUpdate', props: true, component: () => import('src/pages/companyUpdate.vue'), beforeEnter: multiguard([guard]) },
       { path: 'perfil', name: 'perfil', component: () => import('src/pages/perfil.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'perfilUpdate', name: 'perfilUpdate', props: true, component: () => import('src/pages/perfilUpdate.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'perfilCreate', name: 'perfilCreate', component: () => import('src/pages/perfilCreate.vue'), beforeEnter: multiguard([guard]) },
       { path: 'token', name: 'token', component: () => import('src/pages/token.vue'), beforeEnter: multiguard([guard]) },
       { path: 'validation', name: 'validation', component: () => import('src/pages/validation.vue'), beforeEnter: multiguard([guard]) }
     ]

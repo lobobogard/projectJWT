@@ -1,272 +1,166 @@
-<template lang="">
+<template lang="html">
 <q-page class="bg-grey-2">
-  <div>
-    <div class="row justify-center">
-      <div class="q-mt-xl col-3 text-white bg-red-10 text-center rcorners">
-          <label class="label">PERFIL</label>
+<div>
+  <div class="row justify-center">
+      <div class="q-mt-sm col-3 text-center">
+        <q-icon name="school" class="text-red-10" style="font-size: 3rem;" />
       </div>
     </div>
-    <div class="row q-ml-md q-mt-md">
-      <div class="col-11 col-sm q-mt-md q-mr-md">
-        <selectCompany />
-         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refCompany"><label>Field is required</label></div></q-slide-transition>
-      </div>
-      <div class="col-11 col-sm q-mt-md marginLeft">
-         <selectSOperative />
-          <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refSOperative"><label>Field is required</label></div></q-slide-transition>
-      </div>
-      <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-        <selectServer />
-         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refServer"><label>Field is required</label></div></q-slide-transition>
-      </div>
+  <div class="row q-pt-md">
+    <div class="col-11 col-sm q-mt-md marginLeft text-center">
+       <q-btn class="bg-grey-7 text-white" icon="add" label="perfil" style="width: 200px" :to="{name:'perfilCreate'}"/>
     </div>
-    <div class="row q-ml-md q-mt-md">
-      <div class="col-11 col-sm q-mt-md text-left">
-      <div class="shadow-3 bg-blue-grey-9 text-white">
-        <q-checkbox v-model="mySql" label="MySql" color="teal" />
-        <q-checkbox v-model="mariaDB" label="MariaDB" color="pink" />
-        <q-checkbox v-model="postgresSql" label="PostgresSql" color="orange" />
-        <q-checkbox v-model="mongoDB" label="MongoDB" color="red" />
-        <q-checkbox v-model="redis" label="Redis" color="cyan" />
-        <q-checkbox v-model="sqlite" label="SQLite" color="green" />
-      </div>
-      <div>
-         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refDataBase"><label>Field is required</label></div></q-slide-transition>
-      </div>
-      </div>
-      <div class="col-11 col-sm q-mt-md marginLeft">
-        <selectBackEnd />
-         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refBackEnd"><label>Field is required</label></div></q-slide-transition>
-      </div>
-      <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
-        <selectFrontEnd />
-         <q-slide-transition><div class="text-red-10" style="font-size:90%;" v-if="refFrontEnd"><label>Field is required</label></div></q-slide-transition>
-      </div>
+    <div class="col-11 col-sm q-mt-md marginLeft">
+      <q-select dense filled clearable v-model="company" :options="optionCompany" color="dark" emit-value map-options option-value="ID" option-label="companyName" label="Company"/>
     </div>
-    <div class="row justify-center q-mt-xl">
-      <div class="col-4 col-sm-2">
-        <q-btn :loading="loading" color="white" text-color="dark" label="" style="width: 130px" @click="send" >
-          SAVE
+    <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
+      <q-select dense filled clearable v-model="sysOperative" :options="optionSystemOperative" color="dark" emit-value map-options option-value="ID" option-label="systemOperative" label="System Operative"/>
+    </div>
+    <div class="col-11 col-sm q-mt-md q-mr-md marginLeft">
+       <q-select dense filled v-model="backEnd" :options="optionsBackEnd" style="color:white;" label="Back End" multiple emit-value map-options optio-value="id" option-label="backEnd" color="red-10">
+      <template v-slot:option="{ itemProps, opt, selected, toggleOption }">
+        <q-item v-bind="itemProps"><q-item-section><q-item-label v-html="opt.backEnd" ></q-item-label></q-item-section>
+          <q-item-section side><q-toggle :model-value="selected" @update:model-value="toggleOption(opt)" /></q-item-section>
+        </q-item>
+      </template>
+    </q-select>
+    </div>
+  </div>
+  <div class="row q-mt-xl">
+    <div class="col text-right q-pr-xl pointer">
+      <q-btn :loading="loading" class="bg-red-10 text-white" label="" style="width: 150px" @click="findPerfil">
+          Find
           <template v-slot:loading>
            <q-spinner-hourglass class="on-left" />
            Saving...
            </template>
         </q-btn>
-      </div>
-      <div class="col-4 col-sm-2 text-center">
-        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="compania++"/>
-      </div>
+    </div>
+    <div class="col text-left q-pl-xl">
+      <q-btn class="bg-red-10 text-white" label="clean" style="width: 150px" @click="clean()"/>
     </div>
   </div>
+  <div class="row">
+    <div class="col q-mt-xl">
+        <div class="table-wrapper">
+            <table class="fl-table">
+                <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>System Operative</th>
+                    <th>Back End</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in items" :key="index">
+                    <td>{{item.Company_name}}</td>
+                    <td>{{item.System_operative}}</td>
+                    <td>{{item.Backend}}</td>
+                    <td><q-btn round color="grey-5" glossy text-color="white" icon="edit" size="10px" :to="{name: 'companyUpdate', params: { companyID: item.ID }}" /></td>
+                    <td><q-btn round color="red-10" glossy text-color="white" icon="delete" size="10px" @click="confirmDeletePerfil(item.ID)"/></td>
+                  </tr>
+                  <tr class="text-center" v-if="items.length == 0">
+                    <td class="bg-grey-8 text-white" colspan="8"><q-icon name="disabled_visible" class="text-white" style="font-size: 3em;" /></td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+  </div>
+  <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="rule" color="red-10" text-color="white" />
+          <span class="q-ml-sm">Are you sure to delete this profile?</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="YES" color="red-10" v-close-popup @click ="deletePerfil()"/>
+          <q-btn flat label="NO" color="grey-5" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+</div>
 </q-page>
 </template>
-
 <script>
-import { ref, onMounted, computed, provide } from 'vue'
+import { ref, onMounted } from 'vue'
 import token from '../javascript/token'
 import { api } from 'boot/axios'
 import catchs from '../javascript/catch'
-import selectCompany from 'components/selectCompany'
-import selectServer from 'components/selectServer'
-import selectBackEnd from 'components/selectBackEnd'
-import selectFrontEnd from 'components/selectFrontEnd'
-import selectSOperative from 'components/selectSOperative'
-import { Notificacion } from '../javascript/notification.js'
-import { useStore } from 'vuex'
+import arrays from '../javascript/arrays'
+import { Notificacion } from '../javascript/notification'
 
 export default {
   name: 'perfil',
-  components: { selectCompany, selectBackEnd, selectFrontEnd, selectSOperative, selectServer },
   setup () {
     const { catchError } = catchs()
     const { validateToken } = token()
-    const $store = useStore()
+    const { getComapareID } = arrays()
     // models
+    const confirm = ref(false)
     const company = ref(null)
     const sysOperative = ref(null)
-    const server = ref([])
     const backEnd = ref([])
-    const frontEnd = ref([])
-    const mySql = ref(false)
-    const mariaDB = ref(false)
-    const postgresSql = ref(false)
-    const mongoDB = ref(false)
-    const redis = ref(false)
-    const sqlite = ref(false)
+    const perfilID = ref(null)
     // catalag
-    const optionSystemOperative = ref()
-    const optionServers = ref([])
-    const optionsBackEnd = ref([])
-    const optionsFrontEnd = ref([])
     const optionCompany = ref([])
-    // comperative
-    const compareSystemOperative = ref([])
-    const compareServer = ref([])
-    // validate
-    const refCompany = ref(false)
-    const refSOperative = ref(false)
-    const refServer = ref(false)
-    const refDataBase = ref(false)
-    const refBackEnd = ref(false)
-    const refFrontEnd = ref(false)
+    const optionSystemOperative = ref()
+    const optionsBackEnd = ref([])
     // data
+    const items = ref([])
     const loading = ref(false)
-    // provider model
-    provide('sysOperative', sysOperative)
-    provide('company', company)
-    provide('server', server)
-    provide('backEnd', backEnd)
-    provide('frontEnd', frontEnd)
 
-    // provider catalag
-    provide('optionCompany', optionCompany)
-    provide('optionSystemOperative', optionSystemOperative)
-    provide('optionServers', optionServers)
-    provide('optionsBackEnd', optionsBackEnd)
-    provide('optionsFrontEnd', optionsFrontEnd)
-
-    // config validation
-    const javascriptValidation = computed({
-      get: () => {
-        return $store.state.jwt.javascriptValidation
-      }
-    })
-
-    const send = () => {
-      if (validation()) {
-        createPerfil()
-      }
-    }
-
-    const createPerfil = () => {
+    const findPerfil = () => {
+      loading.value = true
       validateToken().then(token => {
-        const postData = {
-          companyID: company.value,
-          systemOperativeID: getSysOperativeID(),
-          server: getServerID(),
-          backEnd: getComapareID(backEnd.value, optionsBackEnd.value),
-          frontEnd: getComapareID(frontEnd.value, optionsFrontEnd.value),
-          mysql: mySql.value,
-          mariadb: mariaDB.value,
-          postgresql: postgresSql.value,
-          mongodb: mongoDB.value,
-          redis: redis.value,
-          sqlite: sqlite.value
-        }
-        api.post('perfil', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
-          clean()
-          Notificacion(response.data, 'teal-10')
+        const backEnds = getComapareID(backEnd.value, optionsBackEnd.value)
+        api.get('perfilFind?companyID=' + company.value + '&sysOperativeID=' + sysOperative.value + '&backEnd=' + backEnds, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          console.log(response.data)
+          response.data === null ? items.value = [] : items.value = response.data
+          console.log(items.value)
+          loading.value = false
         }).catch((err) => {
+          loading.value = false
           catchError(err)
-          console.log(err)
         })
       })
     }
 
-    const clean = () => {
+    function confirmDeletePerfil (idPerfil) {
+      perfilID.value = idPerfil
+      confirm.value = true
+    }
+
+    function deletePerfil () {
+      validateToken().then(token => {
+        api.delete('perfil/' + perfilID.value, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          Notificacion(response.data, 'teal-10')
+          findPerfil()
+        }).catch((err) => {
+          catchError(err)
+        })
+      })
+    }
+
+    function clean () {
       company.value = null
-      server.value = []
       sysOperative.value = null
       backEnd.value = []
-      frontEnd.value = []
-      mySql.value = false
-      mariaDB.value = false
-      postgresSql.value = false
-      mongoDB.value = false
-      redis.value = false
-      sqlite.value = false
-    }
-
-    const validation = () => {
-      let result = true
-      refCompany.value = false
-      refSOperative.value = false
-      refServer.value = false
-      refDataBase.value = false
-      refBackEnd.value = false
-      refFrontEnd.value = false
-
-      if (!javascriptValidation.value) {
-        return result
-      }
-
-      if (!company.value) {
-        refCompany.value = true
-        result = false
-      }
-
-      if (!sysOperative.value) {
-        refSOperative.value = true
-        result = false
-      }
-
-      if (server.value.length === 0) {
-        refServer.value = true
-        result = false
-      }
-
-      if (backEnd.value.length === 0) {
-        refBackEnd.value = true
-        result = false
-      }
-
-      if (frontEnd.value.length === 0) {
-        refFrontEnd.value = true
-        result = false
-      }
-
-      if (!mySql.value && !mariaDB.value && !postgresSql.value && !mongoDB.value && !redis.value && !sqlite.value) {
-        refDataBase.value = true
-        result = false
-      }
-
-      return result
-    }
-
-    const getComapareID = (items, object) => {
-      const value = []
-      items.forEach((item, index) => { value[index] = compareObjects(item.ID, object) })
-      return value
-    }
-
-    const compareObjects = (item, object) => {
-      let result = null
-      object.forEach((obj) => { if (obj.ID === item) { result = obj.ID } })
-      return result
-    }
-
-    const getSysOperativeID = () => {
-      let sysOperativeID = null
-      compareSystemOperative.value.forEach((obj) => { if (obj.systemOperative === sysOperative.value) { sysOperativeID = obj.ID } })
-      return sysOperativeID
-    }
-
-    const getServerID = () => {
-      const value = []
-      server.value.forEach((server, index) => { value[index] = compareServerName(server) })
-      return value
-    }
-
-    const compareServerName = (server) => {
-      let serverID = null
-      compareServer.value.forEach((obj) => { if (obj.server === server) { serverID = obj.ID } })
-      return serverID
     }
 
     const mounted = () => {
-      validateToken().then((token) => {
-        api.get('catalogueCompany', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+      validateToken().then(token => {
+        api.get('perfil', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          console.log(response.data.BackEnd)
           optionCompany.value = response.data.Company
-          optionSystemOperative.value = response.data.CatSystemOperative.map((obj, i) => { return obj.systemOperative })
-          compareSystemOperative.value = response.data.CatSystemOperative
-          optionServers.value = response.data.CatServer.map((obj, i) => { return obj.server })
-          compareServer.value = response.data.CatServer
-          optionsBackEnd.value = response.data.BackEnd
-          optionsFrontEnd.value = response.data.FrontEnd
-          console.log(response.data)
+          optionSystemOperative.value = response.data.CatSystemOperative
+          optionsBackEnd.value = response.data.CatBackEnd
         }).catch((err) => {
-          catchError(err)
           console.log(err)
+          catchError(err)
         })
       })
     }
@@ -274,42 +168,28 @@ export default {
     onMounted(mounted)
 
     return {
-      // catalag
-      optionCompany,
-      optionServers,
-      optionsBackEnd,
-      optionsFrontEnd,
-      optionSystemOperative,
-      // compare
-      compareSystemOperative,
-      compareServer,
-      // models
+      items,
+      loading,
+      // model
+      confirm,
       company,
       sysOperative,
-      server,
       backEnd,
-      frontEnd,
-      mySql,
-      mariaDB,
-      postgresSql,
-      mongoDB,
-      redis,
-      sqlite,
-      // validate
-      refCompany,
-      refSOperative,
-      refServer,
-      refDataBase,
-      refBackEnd,
-      refFrontEnd,
-      // data
-      loading,
-      send
+      perfilID,
+      // catalogue
+      optionCompany,
+      optionSystemOperative,
+      optionsBackEnd,
+      // function
+      findPerfil,
+      confirmDeletePerfil,
+      deletePerfil,
+      clean
     }
   }
 }
 </script>
-<style>
+<style lang="css" scoped>
 .label {
   font-size: 17px;
 }
@@ -320,10 +200,11 @@ export default {
   padding: 8px;
 }
 
-@media only screen and (min-width: 40em) and (orientation: landscape) {
+@media only screen and (min-width: 20em) and (orientation: landscape) {
   .marginLeft {
-    margin-left: 49px;
+    margin-left: 20px;
   }
 }
 
+@import '../css/table.css'
 </style>

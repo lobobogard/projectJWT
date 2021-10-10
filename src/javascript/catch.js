@@ -4,7 +4,11 @@ export default function () {
   const catchError = (err) => {
     console.log(err.response.data)
     if (err.response.status === 400) {
-      Notificacion(err.response.data.error, 'red-10')
+      if (err.response.data.error) {
+        Notificacion(err.response.data.error, 'red-10')
+      } else {
+        Notificacion(err.response.data, 'red-10')
+      }
     }
 
     if (err.response.status === 401) {
