@@ -49,5 +49,9 @@ export default {
 }
 </script>
 <style lang="css" scoped>
-
+.rcorners {
+  border-radius: 45px;
+  background: #73AD21;
+  padding: 8px;
+}
 </style>

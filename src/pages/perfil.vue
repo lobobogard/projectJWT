@@ -32,7 +32,7 @@
           Find
           <template v-slot:loading>
            <q-spinner-hourglass class="on-left" />
-           Saving...
+           Searching...
            </template>
         </q-btn>
     </div>
@@ -58,7 +58,7 @@
                     <td>{{item.Company_name}}</td>
                     <td>{{item.System_operative}}</td>
                     <td>{{item.Backend}}</td>
-                    <td><q-btn round color="grey-5" glossy text-color="white" icon="edit" size="10px" :to="{name: 'companyUpdate', params: { companyID: item.ID }}" /></td>
+                    <td><q-btn round color="grey-5" glossy text-color="white" icon="edit" size="10px" :to="{name: 'perfilUpdate', params: { perfilID: item.ID }}" /></td>
                     <td><q-btn round color="red-10" glossy text-color="white" icon="delete" size="10px" @click="confirmDeletePerfil(item.ID)"/></td>
                   </tr>
                   <tr class="text-center" v-if="items.length == 0">

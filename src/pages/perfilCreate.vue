@@ -54,7 +54,7 @@
         </q-btn>
       </div>
       <div class="col-4 col-sm-2 text-center">
-        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="compania++"/>
+        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="clean"/>
       </div>
     </div>
   </div>
@@ -294,7 +294,8 @@ export default {
       refFrontEnd,
       // data
       loading,
-      send
+      send,
+      clean
     }
   }
 }

@@ -46,7 +46,7 @@
     <div class="row justify-center q-mt-xl">
       <div class="col-4 col-sm-2">
         <q-btn :loading="loading" color="white" text-color="dark" label="" style="width: 130px" @click="send" >
-          SAVE
+          UPDATE
           <template v-slot:loading>
            <q-spinner-hourglass class="on-left" />
            Saving...
@@ -54,7 +54,7 @@
         </q-btn>
       </div>
       <div class="col-4 col-sm-2 text-center">
-        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="compania++"/>
+        <q-btn color="white" text-color="dark" label="CLEAN" style="width: 130px" @click="clean()"/>
       </div>
     </div>
   </div>
@@ -76,8 +76,12 @@ import { useStore } from 'vuex'
 
 export default {
   name: 'perfil',
+  props: {
+    perfilID: String
+  },
   components: { selectCompany, selectBackEnd, selectFrontEnd, selectSOperative, selectServer },
-  setup () {
+  setup (props) {
+    console.log(props.perfilID)
     const { catchError } = catchs()
     const { validateToken } = token()
     const $store = useStore()
@@ -117,7 +121,6 @@ export default {
     provide('server', server)
     provide('backEnd', backEnd)
     provide('frontEnd', frontEnd)
-
     // provider catalag
     provide('optionCompany', optionCompany)
     provide('optionSystemOperative', optionSystemOperative)
@@ -153,8 +156,7 @@ export default {
           redis: redis.value,
           sqlite: sqlite.value
         }
-        api.post('perfil', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
-          clean()
+        api.put('perfil/' + props.perfilID, postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
           Notificacion(response.data, 'teal-10')
         }).catch((err) => {
           catchError(err)
@@ -255,7 +257,8 @@ export default {
 
     const mounted = () => {
       validateToken().then((token) => {
-        api.get('catalogueCompany', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+        api.get('mountPerfil/' + props.perfilID, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          // catalogue
           optionCompany.value = response.data.Company
           optionSystemOperative.value = response.data.CatSystemOperative.map((obj, i) => { return obj.systemOperative })
           compareSystemOperative.value = response.data.CatSystemOperative
@@ -263,7 +266,21 @@ export default {
           compareServer.value = response.data.CatServer
           optionsBackEnd.value = response.data.BackEnd
           optionsFrontEnd.value = response.data.FrontEnd
-          console.log(response.data)
+          // model
+          company.value = response.data.getDataPerfil.Perfil.companyID
+          sysOperative.value = response.data.getDataPerfil.CatSystemOperativeData.systemOperative
+          server.value = response.data.getDataPerfil.CatServerNames
+          backEnd.value = response.data.getDataPerfil.BackEndIDS
+          frontEnd.value = response.data.getDataPerfil.FrontEndIDS
+          // model checkbox
+          mySql.value = response.data.getDataPerfil.GetDataBase.Mysql
+          mariaDB.value = response.data.getDataPerfil.GetDataBase.Mariadb
+          postgresSql.value = response.data.getDataPerfil.GetDataBase.Postgresql
+          mongoDB.value = response.data.getDataPerfil.GetDataBase.Mongodb
+          redis.value = response.data.getDataPerfil.GetDataBase.Redis
+          sqlite.value = response.data.getDataPerfil.GetDataBase.Sqlite
+
+          console.log(response.data.getDataPerfil.GetDataBase.Mysql)
         }).catch((err) => {
           catchError(err)
           console.log(err)
@@ -304,7 +321,8 @@ export default {
       refFrontEnd,
       // data
       loading,
-      send
+      send,
+      clean
     }
   }
 }

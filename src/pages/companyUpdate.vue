@@ -53,7 +53,7 @@
     <div class="row justify-center q-mt-xl">
       <div class="col-4 col-sm-2">
         <q-btn :loading="loading" color="white" text-color="dark" label="" style="width: 130px" @click="send" >
-          SAVE
+          UPDATE
           <template v-slot:loading>
            <q-spinner-hourglass class="on-left" />
            Saving...

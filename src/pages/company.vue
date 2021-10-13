@@ -38,7 +38,7 @@
           Find
           <template v-slot:loading>
            <q-spinner-hourglass class="on-left" />
-           Saving...
+           Searching...
            </template>
         </q-btn>
     </div>
