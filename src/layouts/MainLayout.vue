@@ -40,58 +40,34 @@ import EssentialLink from 'components/EssentialLink.vue'
 const linksList = [
   {
     title: 'Company',
-    caption: 'Capture Company',
+    caption: 'Capture Company (User)',
     icon: 'location_city',
     link: 'company'
   },
   {
     title: 'Perfil',
-    caption: 'Capture Perfil',
+    caption: 'Capture Perfil (User)',
     icon: 'school',
     link: 'perfil'
   },
   {
     title: 'Token',
-    caption: 'Options token',
+    caption: 'Options token (Admin)',
     icon: 'token',
     link: 'token'
   },
   {
     title: 'Validation',
-    caption: 'Options validation',
+    caption: 'Options validation (Admin)',
     icon: 'build',
     link: 'validation'
+  },
+  {
+    title: 'Concurrency',
+    caption: 'Options concurrency (Admin)',
+    icon: 'tips_and_updates',
+    link: 'concurrency'
   }
-  // {
-  //   title: 'Discord Chat Channel',
-  //   caption: 'chat.quasar.dev',
-  //   icon: 'chat',
-  //   link: 'https://chat.quasar.dev'
-  // },
-  // {
-  //   title: 'Forum',
-  //   caption: 'forum.quasar.dev',
-  //   icon: 'record_voice_over',
-  //   link: 'https://forum.quasar.dev'
-  // },
-  // {
-  //   title: 'Twitter',
-  //   caption: '@quasarframework',
-  //   icon: 'rss_feed',
-  //   link: 'https://twitter.quasar.dev'
-  // },
-  // {
-  //   title: 'Facebook',
-  //   caption: '@QuasarFramework',
-  //   icon: 'public',
-  //   link: 'https://facebook.quasar.dev'
-  // },
-  // {
-  //   title: 'Quasar Awesome',
-  //   caption: 'Community Quasar projects',
-  //   icon: 'favorite',
-  //   link: 'https://awesome.quasar.dev'
-  // }
 ]
 
 import { defineComponent, computed } from 'vue'

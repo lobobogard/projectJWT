@@ -5,7 +5,7 @@
     <div class="row q-mt-md justify-center text-white">
       <div class="col-9 bg-teal-10 shadow-3 q-pl-md q-pr-sm q-pt-sm q-pb-sm">
         JWT (JSON Web Token) is a standard that is within the RFC 7519 document.<br>
-        A) Click on the top token icon to test the token on its official page.<br>
+        A) Click on the top token icon to validate the token on its official page.<br>
         B) The options buttons are generated for testing purposes.<br>
         C) The <b>"token refresh"</b> is generated in a cookie handling an expiration time of <b>10 minutes</b> for the purpose of separate tests. It handles other extra safeguards such as Httponly and SameSmite of strict type.<br>
         D) The <b>"token"</b> is stored in the session storage has <b>5 minutes</b> of expiration after expire will be renove the token and cookie and not logout for that.

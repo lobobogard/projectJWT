@@ -65,20 +65,22 @@
       </div>
     </div>
     <br>
+    <concurrencyDataEmail />
   </div>
 </q-page>
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, provide } from 'vue'
 import { api } from 'boot/axios'
 import { Notificacion } from '../javascript/notification.js'
 import token from '../javascript/token'
 import catchs from '../javascript/catch'
 import { useStore } from 'vuex'
-// import { SessionStorage } from 'quasar'
+import concurrencyDataEmail from 'components/concurrencyDataEmail'
 
 export default {
+  components: { concurrencyDataEmail },
   setup () {
     const { catchError } = catchs()
     const { validateToken } = token()
@@ -99,13 +101,20 @@ export default {
       cellPhone: '',
       phone: ''
     })
+    const emailFlag = ref(false)
+    const concurrencyFlag = ref(false)
+    const modalEmail = ref(false)
+    const dataEmail = ref(null)
+    // provide
+    provide('concurrencyFlag', concurrencyFlag)
+    provide('modalEmail', modalEmail)
+    provide('dataEmail', dataEmail)
 
     const send = () => {
       if (validation()) {
         loading.value = true
         validateToken().then(token => {
           const postData = {
-          // userId: 1,
             ContactName: data.value.contact,
             CompanyName: data.value.company,
             Country_id: data.value.country,
@@ -114,14 +123,27 @@ export default {
             Phone: data.value.phone.toString()
           }
           api.post('company', postData, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
-            Notificacion(response.data, 'teal-10')
+            if (sendEmail()) {
+              Notificacion('Created company success', 'teal-10')
+              dataEmail.value = response.data
+            } else {
+              Notificacion(response.data, 'teal-10')
+            }
             clean().then(() => reset())
+            loading.value = false
           }).catch((err) => {
             loading.value = false
             catchError(err)
           })
         })
       }
+    }
+
+    function sendEmail () {
+      if (emailFlag.value) {
+        modalEmail.value = true
+      }
+      return emailFlag.value
     }
 
     const clean = async () => {
@@ -181,7 +203,9 @@ export default {
     const catalguePerfil = (token) => {
       api.get('catalogueCountry', { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
         console.log(response.data)
-        catalogueCountry.value = response.data
+        emailFlag.value = response.data.ConfConcurrency.sendEmail
+        concurrencyFlag.value = response.data.ConfConcurrency.concurrency
+        catalogueCountry.value = response.data.Country
       }).catch((err) => {
         catchError(err)
       })
@@ -201,7 +225,10 @@ export default {
       validation,
       isValidEmail,
       send,
-      reset
+      reset,
+      modalEmail,
+      emailFlag,
+      concurrencyFlag
     }
   }
 }
