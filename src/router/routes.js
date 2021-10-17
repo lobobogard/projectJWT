@@ -27,7 +27,8 @@ const routes = [
       { path: 'perfilCreate', name: 'perfilCreate', component: () => import('src/pages/perfilCreate.vue'), beforeEnter: multiguard([guard]) },
       { path: 'token', name: 'token', component: () => import('src/pages/token.vue'), beforeEnter: multiguard([guard]) },
       { path: 'validation', name: 'validation', component: () => import('src/pages/validation.vue'), beforeEnter: multiguard([guard]) },
-      { path: 'concurrency', name: 'concurrency', component: () => import('src/pages/concurrency.vue'), beforeEnter: multiguard([guard]) }
+      { path: 'concurrency', name: 'concurrency', component: () => import('src/pages/concurrency.vue'), beforeEnter: multiguard([guard]) },
+      { path: 'estadistic', name: 'estadistic', component: () => import('src/pages/estadistic.vue'), beforeEnter: multiguard([guard]) }
     ]
   },
 

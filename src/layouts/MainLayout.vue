@@ -51,6 +51,12 @@ const linksList = [
     link: 'perfil'
   },
   {
+    title: 'Estadistic',
+    caption: 'Check Estadistic (User)',
+    icon: 'insert_chart_outlined',
+    link: 'estadistic'
+  },
+  {
     title: 'Token',
     caption: 'Options token (Admin)',
     icon: 'token',
