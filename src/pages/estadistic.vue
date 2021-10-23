@@ -76,12 +76,15 @@ export default {
         const datalabel = []
         const dataseries = []
         api.get('estadistic?backEnd=' + getBackEnd + '&company=' + getCompany, { headers: { Authorization: `Bearer ${token}` } }).then((response) => {
+          console.log(response.data)
           if (response.data !== null) {
             response.data.forEach(function (element) {
               datalabel.push(element.Back_end)
               dataseries.push(element.ReportBackEnd)
             })
             assignDataEstadistic(datalabel, dataseries)
+          } else {
+            assignDataEstadistic([], [])
           }
         }).catch((err) => {
           catchError(err)

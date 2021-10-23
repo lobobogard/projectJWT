@@ -19,6 +19,7 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', name: 'index', component: () => import('pages/Index.vue') },
+      { path: 'information', name: 'information', component: () => import('src/pages/information.vue'), beforeEnter: multiguard([guard]) },
       { path: 'company', name: 'company', component: () => import('src/pages/company.vue'), beforeEnter: multiguard([guard]) },
       { path: 'companyCreate', name: 'companyCreate', component: () => import('src/pages/companyCreate.vue'), beforeEnter: multiguard([guard]) },
       { path: 'companyUpdate', name: 'companyUpdate', props: true, component: () => import('src/pages/companyUpdate.vue'), beforeEnter: multiguard([guard]) },

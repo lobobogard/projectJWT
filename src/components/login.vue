@@ -39,19 +39,14 @@
                     </q-input>
                  </div>
               </div>
-              <div class="row justify-center">
+              <div class="row justify-center q-mt-md">
                  <q-slide-transition>
                  <div class="col-9 q-ml-md" v-show="validaContrasena">
                     <label class="font_advertencia"> {{validaContrasena}} </label><q-icon class="q-pl-sm" name="info" style="color: white; font-size: 1em;" />
                  </div>
                  </q-slide-transition>
               </div>
-              <div class="row justify-center q-mt-md text-center">
-                 <div class="col-9">
-                     <q-checkbox class="font_checkbox" keep-color v-model="cyan" size="xs" label="keep Me Logged In" color="pink-8" />
-                 </div>
-              </div>
-              <div class="row justify-center q-mt-md text-center">
+              <div class="row justify-center q-mt-xl text-center">
                  <div class="col-9">
                       <label class="font_register pointer" @click="opcionLoginRegister = !opcionLoginRegister" style="text-decoration:underline">REGISTER</label>
                  </div>
@@ -105,11 +100,9 @@ export default defineComponent({
     const guardarCuenta = () => {
       const data = { name: nombre.value, pass: contrasena.value }
       api.post('login', data, { withCredentials: true }).then((response) => {
-      // api.post('login', data, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' }}).then((response) => {
-        console.log(response.data)
         saveTokens(response.data.token)
-        Notificacion('Successfully Generated', 'cyan-10')
-        router.push({ name: 'perfil' })
+        Notificacion('Successfully Generated Token', 'cyan-10')
+        router.push({ name: 'information' })
       }).catch(error => {
         console.log(error)
         spinnerGenerar.value = false

@@ -54,7 +54,7 @@ h2{
 
 .fl-table thead th:nth-child(odd) {
   color: #ffffff;
-  background: #847d7d;
+  background: #c11b1b;
 }
 
 .fl-table tr:nth-child(even) {

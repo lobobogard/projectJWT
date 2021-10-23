@@ -17,14 +17,22 @@
         </div>
       </q-toolbar>
     </q-header>
-
     <q-drawer v-model="drawer" bordered class="bg-dark text-white" v-if="sessionToken">
       <q-list>
-        <q-item-label header>
-          Essential Links
+         <q-slide-transition>
+        <q-item-label header v-if="!showTextJWT">
+          <textJWT />
         </q-item-label>
+         </q-slide-transition>
 
-        <EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+      <div class="text-center">
+        <q-toggle v-model="showTextJWT" checked-icon="thumb_up_off_alt" unchecked-icon="thumb_down_off_alt" size="lg">
+          <q-tooltip anchor="top middle" self="bottom middle" :offset="[10, 10]">
+            <strong>{{showTextJWT ? "SHOW THE SENTENCE BUT IT WILL PERFORM POORLY" : "HIDE THE SENTENCE FOR BETTER PERFORMANCE" }}</strong>
+          </q-tooltip>
+        </q-toggle>
+      </div>
+        <EssentialLink class="q-mt-md" v-for="link in essentialLinks" :key="link.title" v-bind="link" />
       </q-list>
     </q-drawer>
 
@@ -38,6 +46,12 @@
 import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
+  {
+    title: 'Information',
+    caption: 'Info about System',
+    icon: 'info',
+    link: 'information'
+  },
   {
     title: 'Company',
     caption: 'Capture Company (User)',
@@ -76,7 +90,8 @@ const linksList = [
   }
 ]
 
-import { defineComponent, computed } from 'vue'
+import textJWT from 'components/textJWT.vue'
+import { defineComponent, computed, ref } from 'vue'
 import logoutApi from '../javascript/logoutApi'
 import { useStore } from 'vuex'
 
@@ -84,12 +99,12 @@ export default defineComponent({
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    EssentialLink, textJWT
   },
-
   setup () {
     const { logout, sessionToken } = logoutApi()
     const $store = useStore()
+    const showTextJWT = ref(false)
 
     const drawer = computed({
       get: () => {
@@ -105,6 +120,7 @@ export default defineComponent({
     }
 
     return {
+      showTextJWT,
       sessionToken,
       essentialLinks: linksList,
       toggleLeftDrawer,
