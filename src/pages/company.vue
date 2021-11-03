@@ -60,8 +60,6 @@
                     <th>Phone</th>
                     <th>Update</th>
                     <th>Delete</th>
-                    <!-- <th><q-icon name="edit" class="text-red-10" style="font-size: 1.5rem;" /></th> -->
-                    <!-- <th><q-icon name="delete" class="text-grey-4" style="font-size: 1.5rem;" /></th> -->
                 </tr>
                 </thead>
                 <tbody>
