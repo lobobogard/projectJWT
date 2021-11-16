@@ -85,7 +85,7 @@ export default defineComponent({
     }
 
     const copyPublicKey = () => {
-      const text = '-----BEGIN PUBLIC KEY----- MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwoEOTGMNSoNujpo1GJdpzfw6BmD8P6YAfTia2ifjN6ncRvMnBYdXAXJtyO9HksY0Cp00rfFo0oZtUcZBSuOnHY8an1wA8w7u3osWu5ctcYpBTxpBYm+e5hfAV2+qKKuLoOHY0GFLeBX+zBvfSdUphvfUvy9+/oDV1V/kqFY7XwwIDAQAB -----END PUBLIC KEY-----'
+      const text = '-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsVHo/N2a+C5Bmqb5W+DrMe/X3cMtR/OR920egk4V1399W3PPxpaG9W5brzzC89IkDiPLcEbheq8ILcAteLhcG1sI057z9cSft/VdHvlzpLZhBn1gHsT6eWh2tpRPVwfIjNnF7V5+Z1fIfvkjo7rDAGeX9tdKEWvEFR2G6JSpga9QipSL2ivE25Twg9ui9c+Z0dbU5VqqG2mhv8x+6/r/xoRR15HYVKaSyOq2/P+GE87VV1XfZevenwkLmr3iBMi1cesyONEBmN4E3hfNC/6OcUz/UhQ03DmnUYezMZ0Q5qVGmivLlavb6Uy0gXq3L3/hMWWhaUah+PvccbCP7kyKBwIDAQAB -----END PUBLIC KEY-----'
       navigator.clipboard.writeText(text).then(function () {
         Notificacion('PUBLIC KEY SSH to copy was successful!', 'pink-10')
       }, function (err) {

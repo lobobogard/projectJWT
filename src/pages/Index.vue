@@ -1,8 +1,8 @@
 <template>
   <q-page>
     <div class="">
-    <register v-if="opcionLoginRegister" />
-    <login  v-if="!opcionLoginRegister" />
+    <register v-if="!opcionLoginRegister" />
+    <login  v-if="opcionLoginRegister" />
     </div>
   </q-page>
 </template>

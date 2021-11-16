@@ -104,7 +104,7 @@ export default defineComponent({
   setup () {
     const { logout, sessionToken } = logoutApi()
     const $store = useStore()
-    const showTextJWT = ref(false)
+    const showTextJWT = ref(true)
 
     const drawer = computed({
       get: () => {
